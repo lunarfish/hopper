@@ -1,17 +1,48 @@
 version: '3'
 services:
-  node:
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+    expose:
+      - 27017
+    volumes:
+      - mongodb:/data/db
+    networks:
+      hopper:
+        ipv4_address: 172.16.1.14
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=bratislava
+    command: ["--bind_ip_all"]
+  express:
     restart: always
     build: .
     ports:
       - 80:3000
     volumes:
-      - ./:/code
-  mongo:
-    image: mongo
-    ports:
-      - 27017:27017
-    volumes:
-      - mongodb:/data/db
+      - .:/usr/src/app
+    networks:
+      hopper:
+        ipv4_address: 172.16.1.12
+    depends_on:
+      - mongo
+    links:
+      - mongo
+    environment:
+      - MONGO_USERNAME=hopper
+      - MONGO_PASSWORD=does this work
+  # client:
+  #   image: mongoclient/mongoclient:4.0.0
+  #   networks:
+  #     hopper:
+  #       ipv4_address: 172.16.1.13
+networks:
+  hopper:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.1.0/24
 volumes:
  mongodb:

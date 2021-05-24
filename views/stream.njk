@@ -1,0 +1,27 @@
+{% extends "layouts/default.njk" %}
+
+{% block header %}
+<h2>{{ hopper.name }}</h2>
+{% endblock %}
+
+{% block content %}
+<h3>Downstream hoppers:</h3>
+<ul class="item-list">
+  {% for stream in downstream %}
+  <li class="item">
+    <a href="/hopper/{{ stream.downstream.slug }}">
+      {{ stream.downstream.name }}
+    </a>
+  </li>
+  {% endfor %}
+</ul>
+<h3>Add new downstream hopper</h3>
+<form method="post" action="/hopper/{{ hopper.slug }}/stream/add">
+  <select id="add_downstream" name="add_downstream">
+    {% for hopper in hoppers %}
+    <option value="{{ hopper.id }}">{{ hopper.name }}</option>
+    {% endfor %}
+  </select>
+  <input type="submit" value="Add" class="button">
+</form>
+{% endblock %}

@@ -1,0 +1,8 @@
+use admin
+db.createUser(
+  {
+    user: "hopper",
+    pwd: "does this work",
+    roles: [ { role: "readWrite", db: "hopper" } ]
+  }
+)

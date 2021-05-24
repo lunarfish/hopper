@@ -1,0 +1,31 @@
+{% extends "layouts/default.njk" %}
+
+{% block header %}
+<div class="hopper grid-x grid-margin-x grid-padding-y">
+  <div class="cell small-3 medium-2 large-1">
+    {% include 'components/hopper-status.njk' %}
+  </div>
+  <div class="cell small-9 medium-10 large-11">
+    <h2>{{ hopper.name }}</h2>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<h3>Jobs:</h3>
+<ul class="item-list">
+  {% for job in jobs %}
+    <li class="item">
+      <a href="/hopper/{{ hopper.slug }}/job/{{ job.uuid }}">
+        {{ job.name }}
+      </a>
+    </li>
+    {% endfor %}
+</ul>
+<h3>Add a job</h3>
+<form method="post" action="/hopper/{{ hopper.slug }}/job/add">
+  <label for="name">Job name</label>
+  <input type="text" name="name">
+  <input type="submit" value="Add" class="button"> 
+</form>
+{% endblock %}
