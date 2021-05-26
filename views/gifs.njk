@@ -7,7 +7,7 @@
   </div>
   <div class="cell small-12 medium-6 large-8">
     <form method="post" action="/gifs">
-    <input type="text" placeholder="Search term" name="search_term" value="{{search_term}}" class="expand">
+    <input type="text" placeholder="Search tenor" name="search_term" value="{{search_term}}" class="expand">
     </form>
   </div>
 </div>
@@ -19,7 +19,8 @@
     {% for gif in gifs %}
     <div class="cell small-12 medium-6 large-4">
       <button class="button expand" type="submit" name="gif_id" value="{{gif.id}}">
-        <img src="{{gif.gif_url}}" class="expand">
+        <div class="gif-preview expand" style="background-image: url({{gif.tiny_gif_url}})"></div>
+        <!--img src="{{gif.tiny_gif_url}}" class="expand"-->
       </button>
     </div>
     {% endfor %}

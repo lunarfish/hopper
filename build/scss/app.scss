@@ -101,6 +101,16 @@ body {
     }
   }
 
+  .gif-preview {
+    height: 10em;
+    background-size: cover;
+  }
+
+  .gif-render {
+    height: 15em;
+    background-size: cover;
+  }
+
   .hopper {
     .text-cell {
       line-height: 2em;

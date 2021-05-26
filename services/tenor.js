@@ -2,7 +2,7 @@ const config = {
   "Key": process.env.TENOR_API_KEY, // https://tenor.com/developer/keyregistration
   "Filter": process.env.TENOR_CONTENT_FILTER || "medium", // "off", "low", "medium", "high", not case sensitive
   "Locale": "en_GB", // Your locale here, case-sensitivity depends on input
-  "MediaFilter": "minimal", // either minimal or basic, not case sensitive
+  "MediaFilter": "basic", // either minimal or basic, not case sensitive
   "DateFormat": "DD/MM/YYYY - H:mm:ss A" // Change this accordingly
 };
 const Tenor = require("tenorjs").client(config);
@@ -12,6 +12,9 @@ module.exports = {
     return Tenor.Search.Query(terms, limit).then(Results => {
       return Results.map(gif => {
         gif.gif_url = gif.media[0].gif.url;
+        gif.tiny_gif_url = gif.media[0].tinygif.url;
+        gif.nano_gif_url = gif.media[0].nanogif.url;
+        gif.aspect = gif.media[0].gif.dims[0] < gif.media[0].gif.dims[1] ? "portrait": "landscape";
         return gif;
       });
     })

@@ -6,31 +6,45 @@
 
 {% block content %}
 <div class="grid-x grid-margin-x grid-padding-y">
-  <div class="cell large-6 medium-8 small-12">
+  <div class="cell small-12">
     <h3>Job: {{ job.name }}</h3>
-    {% if gif_url %}
-    <img src="{{gif_url}}" class="expand">
-    {% endif %}
-    <form method="post" action="/gifs">
-      <label for="gif-search">Gif search</label>
-      <input type="hidden" name="next_path" value="/hopper/{{job.hopper.slug}}/job/{{job.uuid}}/gif">
-      <input type="text" name="search_term" placeholder="Search term">
-      <input type="submit" class="button expand" value="Search">
-    </form>
+  </div>
+  <div class="cell large-6 medium-8 small-12">
     <form method="post" action="/hopper/{{job.hopper.slug}}/job/{{job.uuid}}">
       <label for="description">Description</label>
-      <textarea name="description" id="description">{{ job.description }}</textarea>
+      <textarea name="description" id="description" placeholder="Description">{{ job.description }}</textarea>
       <input type="submit" class="button expand" value="Save">
     </form>
   </div>
-  <div class="cell large-2 medium-4 small-12">
-    <a href="/hopper/{{job.hopper.slug}}/job/{{job.uuid}}/move" class="button expand">Move</a>
-  </div>
-  <div class="cell large-2 medium-4 small-12">
-    <button class="button expand">Split</button>
-  </div>
-  <div class="cell large-2 medium-4 small-12">
-    <button class="button expand">Delete</button>
+  <div class="cell large-6 medium-4 small-12">
+    <form method="post" action="/gifs">
+      <input type="hidden" name="next_path" value="/hopper/{{job.hopper.slug}}/job/{{job.uuid}}/gif">
+      <div class="grid-x grid-margin-x">
+        <div class="cell small-12">
+          <label for="gif-search">Gif search</label>
+          {% if gif_url %}
+          <div class="gif-render expand" style="background-image: url({{gif_url}})"></div>
+          {% endif %}
+        </div>
+        <div class="cell small-12 medium-8 large-9">
+          <input type="text" name="search_term" placeholder="Search tenor">
+        </div>
+        <div class="cell small-12 medium-4 large-3">
+          <input type="submit" class="button expand" value="Search">
+        </div>
+      </div>
+    </form>
+    <div class="grid-x grid-margin-x">
+      <div class="cell large-4 medium-6 small-12">
+        <a href="/hopper/{{job.hopper.slug}}/job/{{job.uuid}}/move" class="button expand">Move</a>
+      </div>
+      <div class="cell large-4 medium-6 small-12">
+        <button class="button expand">Split</button>
+      </div>
+      <div class="cell large-4 medium-6 small-12">
+        <button class="button expand">Delete</button>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}

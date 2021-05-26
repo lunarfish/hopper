@@ -10,15 +10,11 @@
 
 {% block content %}
 <h3>Jobs:</h3>
-<ul class="item-list">
-  {% for job in jobs %}
-    <li class="item">
-      <a href="/hopper/{{ hopper.slug }}/job/{{ job.uuid }}">
-        {{ job.name }}
-      </a>
-    </li>
-    {% endfor %}
-</ul>
+{% for job in jobs %}
+<a class="button expand left" href="/hopper/{{ hopper.slug }}/job/{{ job.uuid }}">
+  {{ job.name }}
+</a>
+{% endfor %}
 <h3>Add a job</h3>
 <form method="post" action="/hopper/{{ hopper.slug }}/job/add">
   <label for="name">Job name</label>
