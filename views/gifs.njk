@@ -1,0 +1,28 @@
+{% extends "layouts/default.njk" %}
+
+{% block header %}
+<div class="grid-x grid-margin-x grid-padding-y">
+  <div class="cell small-12 medium-6 large-4">
+    <h2>Gif search:</h2>
+  </div>
+  <div class="cell small-12 medium-6 large-8">
+    <form method="post" action="/gifs">
+    <input type="text" placeholder="Search term" name="search_term" value="{{search_term}}" class="expand">
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<form method="post" action="{{next_path}}">
+  <div class="grid-x grid-margin-x grid-padding-y">
+    {% for gif in gifs %}
+    <div class="cell small-12 medium-6 large-4">
+      <button class="button expand" type="submit" name="gif_id" value="{{gif.id}}">
+        <img src="{{gif.gif_url}}" class="expand">
+      </button>
+    </div>
+    {% endfor %}
+  </div>
+</form>
+{% endblock %}

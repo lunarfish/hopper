@@ -1,20 +1,15 @@
 {% extends "layouts/default.njk" %}
 
 {% block header %}
-<h2>Node Test App with MongoDB in Docker containers</h2>
+<h2>Hoppers:</h2>
 {% endblock %}
 
 {% block content %}
-<h3>Hoppers:</h3>
-<ul class="item-list">
-  {% for hopper in hoppers %}
-    <li class="item">
-      <a href="/hopper/{{ hopper.slug }}">
-        {{ hopper.name }}
-      </a>
-    </li>
-    {% endfor %}
-</ul>
+{% for hopper in hoppers %}
+<a class="button expand left" href="/hopper/{{ hopper.slug }}">
+  {{ hopper.name }}
+</a>
+{% endfor %}
 <h3>Add a hopper</h3>
 <form method="post" action="/hopper/add">
   <label for="name">New hopper</label>

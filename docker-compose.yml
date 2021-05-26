@@ -32,6 +32,7 @@ services:
     environment:
       - MONGO_USERNAME=hopper
       - MONGO_PASSWORD=does this work
+      - TENOR_API_KEY=$TENOR_API_KEY
   # client:
   #   image: mongoclient/mongoclient:4.0.0
   #   networks:

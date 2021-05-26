@@ -1,0 +1,39 @@
+{% extends "layouts/default.njk" %}
+
+{% block header %}
+<h2>Hopper: {{ job.hopper.name }}</h2>
+{% endblock %}
+
+{% block content %}
+<div class="grid-x grid-margin-x grid-padding-y">
+  <div class="cell large-12 medium-12 small-12">
+    <h3>Job: {{ job.name }}</h3>
+    <form method="post" action="/hopper/{{job.hopper.slug}}/job/{{job.uuid}}/move">
+    <div class="grid-x grid-margin-x grid-padding-y">
+      <div class="cell large-6 medium-12 small-12">
+      <h3>Current downstream hoppers:</h3>
+      {% for stream in downstream %}
+        <button class="button expand" type="submit" name="target_hopper_id" value="{{stream.downstream.uuid}}">
+          {{ strdeam.downstream.name }}
+        </button>
+      {% endfor %}
+      </div>
+      <div class="cell large-6 medium-12 small-12">
+      <h3>New downstream hopper</h3>
+      {% for hopper in hoppers %}
+      <button class="button expand" type="submit" name="target_hopper_id" value="{{ hopper.uuid }}">
+        {{ hopper.name }}
+      </button>
+      {% endfor %}
+      </div>
+    </div>
+    </form>
+  </div>
+  <div class="cell large-2 medium-4 small-12">
+  </div>
+  <div class="cell large-2 medium-4 small-12">
+  </div>
+  <div class="cell large-2 medium-4 small-12">
+  </div>
+</div>
+{% endblock %}

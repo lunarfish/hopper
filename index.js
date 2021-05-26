@@ -4,6 +4,7 @@ const nunjucks = require('nunjucks');
 const path = require('path');
 const bodyParser = require('body-parser');
 const { v4: uuidv4 } = require('uuid');
+const tenor = require('./services/tenor');
 
 const app = express();
 
@@ -70,17 +71,7 @@ db.on('connected', function () {
     });
   });
 
-  app.get('/job/move', (req, res) => {
-    console.log("/job/move");
-    const job_id = "5121bfa9-d2d3-4aa5-bb87-d5b0a2599ef8";
-    const target_hopper_id = "e9bbdfe2-2732-4356-b9fd-fdb86737490b";
-    moveJob(job_id, target_hopper_id)
-    .then(interim => {
-      return res.json(interim);
-    });
-  });
   // end of test routes
-
   app.get('/', (req, res) => {
     Hopper.find()
       .then(hoppers => {
@@ -115,7 +106,9 @@ db.on('connected', function () {
   });
 
   app.get('/hopper/:hopper_name', (req, res) => {
-    const hopper = Hopper.findOne({name:new RegExp(req.params.hopper_name.replace('-','.'), 'i')})
+    const query = {name:new RegExp(req.params.hopper_name.replace(/\-/g,'.'), 'i')};
+    console.log(query);
+    const hopper = Hopper.findOne(query)
     .then(hopper => {
       console.log("Find collection schema for: " + hopper.slug);
 
@@ -135,14 +128,12 @@ db.on('connected', function () {
       });
     })
     .then(template_data => res.render('hopper', template_data))
-    .catch(err => res.redirect('/error'));
+    .catch(err => res.json(err));
   });
 
   app.get('/hopper/:hopper_name/stream', (req, res) => {
     const hopper = Hopper.findOne({name:new RegExp(req.params.hopper_name.replace('-','.'), 'i')})
     .then(hopper => {
-      console.log("Find collection schema for: " + hopper.slug);
-
       return Stream.find({upstream: hopper.id})
       .populate("downstream")
       .then(downstream => {
@@ -263,10 +254,91 @@ db.on('connected', function () {
       };
     })
     .then(template_data => {
+      if (template_data.job.tenor_gif_id) {
+        console.log(template_data.job.tenor_gif_id);
+        return tenor.get_by_id(template_data.job.tenor_gif_id)
+        .then(gif_url => {
+          console.log(template_data);
+          console.log(gif_url);
+          template_data.gif_url = gif_url;
+          return template_data;
+        })
+      } else {
+        return template_data;
+      }
+    })
+    .then(template_data => {
       console.log(template_data);
       return res.render('job', template_data);
     })
     .catch(err => res.status(500).json({error: err}));
+  });
+
+  app.post('/hopper/:hopper_name/job/:job_id/gif', (req, res) => {
+    const ThisHopperJob = HopperJob(req.params.hopper_name);
+
+    const job = ThisHopperJob.findOne({uuid:req.params.job_id})
+    .then(job => {
+      job.tenor_gif_id = req.body.gif_id;
+      return job.save();
+    })
+    .then(job => res.redirect('/hopper/' + req.params.hopper_name + '/job/' + req.params.job_id))
+    .catch(err => res.status(500).json({error: err}));
+  });
+
+  app.get('/hopper/:hopper_name/job/:job_id/move', (req, res) => {
+    console.log("/job/move");
+
+    const ThisHopperJob = HopperJob(req.params.hopper_name);
+    const job = ThisHopperJob.findOne({uuid:req.params.job_id})
+    .populate("hopper")
+
+    .then(job => {
+      return {
+        job: job,
+        crumbs: [
+          { url: "/", name: "Home" },
+          { url: "/hopper/" + job.hopper.slug, name: job.hopper.name },
+          { url: "/hopper/" + job.hopper.slug + '/job/' + job.uuid, name: job.name}
+        ]
+      };
+    })
+    .then(template_data => {
+      return Stream.find({upstream: template_data.job.hopper.id})
+      .populate("downstream")
+      .then(downstream => {
+        console.log(downstream);
+        template_data.downstream = downstream;
+        return template_data
+      });
+    })
+    .then(template_data => {
+      let exclude = template_data.downstream.map(stream => {
+        return stream.downstream._id;
+      });
+      exclude.push(template_data.job.hopper._id);
+      return Hopper.find({ _id: { $not: { $in: exclude }}})
+      .then(hoppers => {
+        template_data.hoppers = hoppers;
+        return template_data;
+      })
+    })
+    .then(template_data => {
+      console.log(template_data);
+      return res.render('job_move', template_data);
+    })
+    .catch(err => res.status(500).json({error: err}));
+  });
+
+  app.post('/hopper/:hopper_name/job/:job_id/move', (req, res) => {
+    console.log("/job/move");
+    const job_id = req.params.job_id;
+    const target_hopper_id = req.body.target_hopper_id;
+    moveJob(job_id, target_hopper_id)
+    .then(interim => {
+      let hopper_name = interim.target.slug;
+      return res.redirect('/hopper/' + hopper_name + '/job/' + interim.job.uuid);
+    });
   });
 
   app.get('/job/:job_id', (req,res) => {
@@ -288,6 +360,20 @@ db.on('connected', function () {
     .catch(err => {
       console.log("Not found in " + collection.name);
     });
+  });
+
+  app.post('/gifs', (req, res) => {
+    const limit = 24;
+    tenor.search(req.body.search_term, limit)
+    .then(gifs => {
+      return {
+        search_term: req.body.search_term,
+        next_path: req.body.next_path,
+        gifs: gifs
+      };
+    })
+    .then(template_data => res.render('gifs', template_data))
+    .catch(err => console.log(err));
   });
 
   app.listen(port, () => console.log('Server running...'));

@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
 const { v4: uuidv4 } = require('uuid');
-const any = require('promise.any');
 const Schema = mongoose.Schema;
 
 const JobSchema = new Schema({
@@ -40,11 +39,16 @@ const JobSchema = new Schema({
   },
   description: {
     type: String
+  },
+  tenor_gif_id: {
+    type: String
   }
 });
 
 let HopperJob = function (hopper) {
-  return mongoose.model("hpr_" + hopper.replace('-','_'), JobSchema);
+  let collection = "hpr_" + hopper.replace(/\-/g,'_');
+  console.log(collection);
+  return mongoose.model(collection, JobSchema);
 }
 
 let Job = mongoose.model('job', JobSchema);
