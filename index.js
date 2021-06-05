@@ -4,7 +4,9 @@ const nunjucks = require('nunjucks');
 const path = require('path');
 const bodyParser = require('body-parser');
 const { v4: uuidv4 } = require('uuid');
+
 const tenor = require('./services/tenor');
+const common = require('./services/common');
 
 const app = express();
 
@@ -73,12 +75,19 @@ db.on('connected', function () {
 
   // end of test routes
   app.get('/', (req, res) => {
+
+    let template_data = common.template_data();
+    console.log(template_data);
+
     Hopper.find()
       .then(hoppers => {
          if (hoppers.length == 0) res.redirect('/initialise')
-         else return hoppers
+         else return hoppers;
       })
-      .then(hoppers => res.render('index', { hoppers: hoppers }))
+      .then(hoppers => {
+        template_data.hoppers = hoppers;
+        res.render('index', template_data)
+      })
       .catch(err => res.redirect('/initialise'));
   });
 
@@ -106,8 +115,10 @@ db.on('connected', function () {
   });
 
   app.get('/hopper/:hopper_name', (req, res) => {
+    let template_data = common.template_data();
     const query = {name:new RegExp(req.params.hopper_name.replace(/\-/g,'.'), 'i')};
     console.log(query);
+
     const hopper = Hopper.findOne(query)
     .then(hopper => {
       console.log("Find collection schema for: " + hopper.slug);
@@ -117,14 +128,11 @@ db.on('connected', function () {
       return ThisHopperJob.find()
       .then(jobs => {
         console.log(jobs);
-        return {
-          hopper: hopper,
-          hopper_status: "low",
-          jobs: jobs,
-          crumbs: [
-            { url: "/", name: "Home" }
-          ]
-        };
+        template_data.hopper = hopper;
+        template_data.hopper_status = "low";
+        template_data.jobs = jobs;
+
+        return template_data;
       });
     })
     .then(template_data => res.render('hopper', template_data))
@@ -132,20 +140,18 @@ db.on('connected', function () {
   });
 
   app.get('/hopper/:hopper_name/stream', (req, res) => {
+
+    let template_data = common.template_data();
     const hopper = Hopper.findOne({name:new RegExp(req.params.hopper_name.replace('-','.'), 'i')})
     .then(hopper => {
       return Stream.find({upstream: hopper.id})
       .populate("downstream")
       .then(downstream => {
         console.log(downstream);
-        return {
-          hopper: hopper,
-          downstream: downstream,
-          crumbs: [
-            { url: "/", name: "Home" },
-            { url: "/hopper" + hopper.slug, name: hopper.name }
-          ]
-        };
+        template_data.hopper = hopper;
+        template_data.downstream = downstream;
+        template_data.crumbs.push({ url: "/hopper" + hopper.slug, name: hopper.name });
+        return template_data;
       });
     })
     .then(template_data => {
@@ -240,18 +246,17 @@ db.on('connected', function () {
   });
 
   app.get('/hopper/:hopper_name/job/:job_id', (req, res) => {
+    let template_data = common.template_data();
     const ThisHopperJob = HopperJob(req.params.hopper_name);
 
     const job = ThisHopperJob.findOne({uuid:req.params.job_id})
     .populate("hopper")
     .then(job => {
-      return {
-        job: job,
-        crumbs: [
-          { url: "/", name: "Home" },
+      template_data.job = job;
+      template_data.crumbs.push(
           { url: "/hopper/" + job.hopper.slug, name: job.hopper.name }
-        ]
-      };
+      );
+      return template_data;
     })
     .then(template_data => {
       if (template_data.job.tenor_gif_id) {
@@ -287,21 +292,17 @@ db.on('connected', function () {
   });
 
   app.get('/hopper/:hopper_name/job/:job_id/move', (req, res) => {
-    console.log("/job/move");
+    let template_data = common.template_data();
 
     const ThisHopperJob = HopperJob(req.params.hopper_name);
     const job = ThisHopperJob.findOne({uuid:req.params.job_id})
     .populate("hopper")
 
     .then(job => {
-      return {
-        job: job,
-        crumbs: [
-          { url: "/", name: "Home" },
-          { url: "/hopper/" + job.hopper.slug, name: job.hopper.name },
-          { url: "/hopper/" + job.hopper.slug + '/job/' + job.uuid, name: job.name}
-        ]
-      };
+      template_data.job = job;
+      template_data.push({ url: "/hopper/" + job.hopper.slug, name: job.hopper.name });
+      template_data.push({ url: "/hopper/" + job.hopper.slug + '/job/' + job.uuid, name: job.name});
+      return template_data;
     })
     .then(template_data => {
       return Stream.find({upstream: template_data.job.hopper.id})
@@ -342,16 +343,14 @@ db.on('connected', function () {
   });
 
   app.get('/job/:job_id', (req,res) => {
+    let template_data = common.template_data();
+
     console.log("/job/[id]");
     findJob(req.params.job_id)
     .then(job => {
-      return {
-        job: job,
-        crumbs: [
-          { url: "/", name: "Home" },
-          { url: "/hopper/" + job.hopper.slug, name: job.hopper.name }
-        ]
-      };
+      template_data.job = job;
+      template_data.crumbs.push({ url: "/hopper/" + job.hopper.slug, name: job.hopper.name });
+      return template_data;
     })
     .then(template_data => {
       console.log(template_data);
@@ -363,14 +362,14 @@ db.on('connected', function () {
   });
 
   app.post('/gifs', (req, res) => {
+    let template_data = common.template_data();
     const limit = 24;
     tenor.search(req.body.search_term, limit)
     .then(gifs => {
-      return {
-        search_term: req.body.search_term,
-        next_path: req.body.next_path,
-        gifs: gifs
-      };
+      template_data.search_term = req.body.search_term;
+      template_data.next_path = req.body.next_path;
+      template_data.gifs = gifs;
+      return template_data;
     })
     .then(template_data => res.render('gifs', template_data))
     .catch(err => console.log(err));

@@ -2,7 +2,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "npm install",
+    "build": "npm install && npm rebuild node-sass",
     "start": "gulp"
   },
   "devDependencies": {
@@ -14,12 +14,21 @@
   },
   "dependencies": {
     "body-parser": "^1.19.0",
+    "css.gg": "^2.0.0",
     "ejs": "^3.1.6",
     "express": "^4.17.1",
     "foundation-sites": "^6.6.3",
-    "mongoose": "^5.12.11",
+    "icomoon": "^1.0.0",
+    "mongoose": "^5.12.12",
     "nunjucks": "^3.2.0",
     "tenorjs": "^1.0.8",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "jquery": "^3.6.0",
+    "what-input": "^4.1.0"
+  },
+  "resolutions": {
+    "braces": "^2.3.1",
+    "chokidar": "^3.4.0",
+    "yargs-parser": "^18.1.2"
   }
 }
