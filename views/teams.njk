@@ -4,23 +4,22 @@
 <div class="hopper grid-x grid-margin-x grid-padding-y">
   <div class="cell small-12">
     <h2>
-      <i class="icon-box-add"></i>
-      {{ hopper.name }}
+      <i class="icon-profile"></i>
+      Teams
     </h2>
   </div>
 </div>
 {% endblock %}
 
 {% block content %}
-<h3>Jobs:</h3>
-{% for job in jobs %}
-<a class="button expand left" href="/hopper/{{ hopper.slug }}/job/{{ job.uuid }}">
-  {{ job.name }}
+{% for team in teams %}
+<a class="button expand left" href="/team/{{ team.slug }}">
+  {{ team.name }}
 </a>
 {% endfor %}
-<h3>Add a job</h3>
-<form method="post" action="/hopper/{{ hopper.slug }}/job/add">
-  <label for="name">Job name</label>
+<h3>Add a team</h3>
+<form method="post" action="/team/add">
+  <label for="name">Name</label>
   <input type="text" name="name">
   <input type="submit" value="Add" class="button">
 </form>

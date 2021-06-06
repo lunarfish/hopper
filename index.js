@@ -13,6 +13,7 @@ const common = require('./services/common');
 const routes_hoppers = require('./routes/hoppers');
 const routes_jobs = require('./routes/jobs');
 const routes_users = require('./routes/users');
+const routes_teams = require('./routes/teams');
 const routes_tenor = require('./routes/tenor');
 const routes_tests = require('./routes/tests');
 
@@ -93,11 +94,15 @@ db.on('connected', function () {
 
   app.post('/gifs', routes_tenor.post.search);
 
+  // Users
   app.get('/user', routes_users.get.index);
-
   app.post('/user/add', routes_users.post.add);
-
   app.get('/user/:user_id', routes_users.get.user);
+
+  // teams
+  app.get('/team', routes_teams.get.index);
+  app.post('/team/add', routes_teams.post.add);
+  app.get('/team/:team_name', routes_teams.get.team);
 
   app.listen(port, () => console.log('Server running...'));
 });

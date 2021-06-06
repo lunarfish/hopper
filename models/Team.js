@@ -18,4 +18,11 @@ const TeamSchema = new Schema({
   }
 });
 
+TeamSchema
+.virtual('slug')
+.get(function () {
+  return this.name.toLowerCase().replace(/\s+/g, '-');
+});
+
+
 module.exports = Team = mongoose.model('team', TeamSchema);

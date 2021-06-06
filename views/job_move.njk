@@ -1,13 +1,19 @@
 {% extends "layouts/default.njk" %}
 
 {% block header %}
-<h2>Hopper: {{ job.hopper.name }}</h2>
+<h2>
+  <i class="icon-box-add"></i>
+  Hopper: {{ job.hopper.name }}
+</h2>
 {% endblock %}
 
 {% block content %}
 <div class="grid-x grid-margin-x grid-padding-y">
   <div class="cell large-12 medium-12 small-12">
-    <h3>Job: {{ job.name }}</h3>
+    <h3>
+      <i class="icon-terminal"></i>
+      Job: {{ job.name }}
+    </h3>
     <form method="post" action="/hopper/{{job.hopper.slug}}/job/{{job.uuid}}/move">
     <div class="grid-x grid-margin-x grid-padding-y">
       <div class="cell large-6 medium-12 small-12">
