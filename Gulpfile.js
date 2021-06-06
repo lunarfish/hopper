@@ -16,12 +16,9 @@ gulp.task('copy:cssgg', function () {
   .pipe(gulp.dest('node_modules/css.gg/import'));
 });
 
-gulp.task('icons', function() {
-  iconify({
-        src: 'node_modules/icomoon/fonts/*.svg',
-        scssOutput: 'build/scss',
-        styleTemplate: '_icon_gen.scss.mustache'
-    });
+gulp.task('copy:icomoon', function() {
+  return gulp.src('node_modules/icomoon-free-npm/Font/*')
+  .pipe(gulp.dest('assets/foundation/css/fonts'));
 });
 
 gulp.task('copy:foundation', function () {
@@ -37,6 +34,7 @@ gulp.task('develop', function (done) {
       ignore: ['node_modules/*', 'assets/*'],
       tasks: [
         'copy:cssgg',
+        'copy:icomoon',
         'copy:foundation',
         'sass:foundation'
       ]

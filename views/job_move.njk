@@ -14,7 +14,7 @@
       <h3>Current downstream hoppers:</h3>
       {% for stream in downstream %}
         <button class="button expand" type="submit" name="target_hopper_id" value="{{stream.downstream.uuid}}">
-          {{ strdeam.downstream.name }}
+          {{ stream.downstream.name }}
         </button>
       {% endfor %}
       </div>

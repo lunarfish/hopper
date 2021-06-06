@@ -19,11 +19,12 @@
     "express": "^4.17.1",
     "foundation-sites": "^6.6.3",
     "icomoon": "^1.0.0",
+    "icomoon-free-npm": "0.0.0",
+    "jquery": "^3.6.0",
     "mongoose": "^5.12.12",
     "nunjucks": "^3.2.0",
     "tenorjs": "^1.0.8",
     "uuid": "^8.3.2",
-    "jquery": "^3.6.0",
     "what-input": "^4.1.0"
   },
   "resolutions": {
