@@ -3,21 +3,28 @@
 {% block header %}
 <div class="hopper grid-x grid-margin-x grid-padding-y">
   <div class="cell small-12">
-    <h2>Users</h2>
-    </div>
+    <h2>
+      <i class="icon-pacman"></i>
+      Users
+    </h2>
+  </div>
 </div>
 {% endblock %}
 
 {% block content %}
 {% for user in users %}
-<a class="button expand left" href="/user/{{ user.username }}">
-  {{ user.full_name }}
+<a class="button expand left" href="/user/{{ user.uuid }}">
+  {{ user.full_name }} ({{ user.email }})
 </a>
 {% endfor %}
 <h3>Add a user</h3>
 <form method="post" action="/user/add">
-  <label for="username">Username</label>
-  <input type="text" name="username">
+  <label for="username">First name</label>
+  <input type="text" name="first_name">
+  <label for="username">Last name</label>
+  <input type="text" name="last_name">
+  <label for="username">Email address</label>
+  <input type="text" name="email">
   <input type="submit" value="Add" class="button">
 </form>
 {% endblock %}

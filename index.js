@@ -93,7 +93,11 @@ db.on('connected', function () {
 
   app.post('/gifs', routes_tenor.post.search);
 
-  app.get('/users', routes_users.get.users);
+  app.get('/user', routes_users.get.index);
+
+  app.post('/user/add', routes_users.post.add);
+
+  app.get('/user/:user_id', routes_users.get.user);
 
   app.listen(port, () => console.log('Server running...'));
 });
