@@ -12,8 +12,9 @@ module.exports = {
   get: {
     index: (req, res) => {
 
-      let template_data = common.template_data();
+      let template_data = common.template_data(req);
       console.log(template_data);
+
 
       Hopper.find()
         .then(hoppers => {
@@ -37,7 +38,7 @@ module.exports = {
         .catch(err => res.status(500).json({msg: 'Crap!'}));
     },
     hopper: (req, res) => {
-      let template_data = common.template_data();
+      let template_data = common.template_data(req);
       const query = {name:new RegExp(req.params.hopper_name.replace(/\-/g,'.'), 'i')};
       console.log(query);
 
@@ -62,7 +63,7 @@ module.exports = {
     },
     stream: (req, res) => {
 
-      let template_data = common.template_data();
+      let template_data = common.template_data(req);
       const hopper = Hopper.findOne({name:new RegExp(req.params.hopper_name.replace('-','.'), 'i')})
       .then(hopper => {
         return Stream.find({upstream: hopper.id})

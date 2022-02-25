@@ -2,9 +2,13 @@
 
 {% block header %}
 <h2>
-  <i class="icon-pacman"></i>
+  <img class="user-icon" src="{{ user.picture }}"/>
   {{ user.full_name }}
 </h2>
+<a class="button" href="/user/{{user.uuid}}/delete">
+  <i class="icon-bin2"></i>
+</a>
+<p>{{ user.provider_id }}</p>
 {% endblock %}
 
 {% block content %}

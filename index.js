@@ -8,11 +8,14 @@ const { v4: uuidv4 } = require('uuid');
 // services
 const tenor = require('./services/tenor');
 const common = require('./services/common');
+const passport = require('./services/google');
+let session = require('express-session');
 
 // routes
 const routes_hoppers = require('./routes/hoppers');
 const routes_jobs = require('./routes/jobs');
 const routes_users = require('./routes/users');
+const routes_roles = require('./routes/roles');
 const routes_teams = require('./routes/teams');
 const routes_tenor = require('./routes/tenor');
 const routes_tests = require('./routes/tests');
@@ -59,8 +62,39 @@ connectWithRetry();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+app.use(session({
+    secret: 'this is a session secret',
+    resave: false,
+    saveUninitialized: true
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
 db.on('connected', function () {
 
+  app.use(function(req, res, next){
+    passport.session()(req, res, next);
+  });
+
+  app.get('/login', (req, res) => {
+    res.redirect('/auth/google');
+  });
+
+  app.get('/logout', (req, res) => {
+    req.logout();
+    res.redirect('/');
+  });
+
+  app.get('/auth/google',
+    passport.authenticate('google', { scope: ['profile', 'email', 'openid'] })
+  );
+
+  app.get('/auth/google/callback',
+    passport.authenticate('google', { failureRedirect: '/' }),
+    function(req, res) {
+      res.redirect('/');
+    }
+  );
 
   // test routes
   app.get('/job/find', routes_tests.get.job_find);
@@ -97,12 +131,19 @@ db.on('connected', function () {
   // Users
   app.get('/user', routes_users.get.index);
   app.post('/user/add', routes_users.post.add);
+  app.get('/user/me', routes_users.get.me);
   app.get('/user/:user_id', routes_users.get.user);
+  app.get('/user/:user_id/delete', routes_users.get.delete);
+
+  // Roles
+  app.get('/role', routes_roles.get.index);
+  app.get('/role/:role_id', routes_roles.get.role);
 
   // teams
   app.get('/team', routes_teams.get.index);
   app.post('/team/add', routes_teams.post.add);
   app.get('/team/:team_name', routes_teams.get.team);
+  app.post('/team/:team_name/member/add', routes_teams.post.member_add);
 
   app.listen(port, () => console.log('Server running...'));
 });

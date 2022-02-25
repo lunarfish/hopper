@@ -21,6 +21,12 @@
 <form method="post" action="/team/add">
   <label for="name">Name</label>
   <input type="text" name="name">
+  <select name="parent">
+    <option value="">None</option>
+    {% for team in teams %}
+    <option value="{{team.id}}">{{team.name}}</option>
+    {% endfor %}
+  </select>
   <input type="submit" value="Add" class="button">
 </form>
 {% endblock %}

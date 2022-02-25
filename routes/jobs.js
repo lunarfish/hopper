@@ -13,7 +13,7 @@ const {
 module.exports = {
   get: {
     by_uuid: (req,res) => {
-      let template_data = common.template_data();
+      let template_data = common.template_data(req);
 
       console.log("/job/[id]");
       findJob(req.params.job_id)
@@ -42,7 +42,7 @@ module.exports = {
       });
     },
     hopper_job: (req, res) => {
-      let template_data = common.template_data();
+      let template_data = common.template_data(req);
       const ThisHopperJob = HopperJob(req.params.hopper_name);
 
       const job = ThisHopperJob.findOne({uuid:req.params.job_id})
@@ -72,7 +72,7 @@ module.exports = {
       .catch(err => res.status(500).json({error: err}));
     },
     move: (req, res) => {
-      let template_data = common.template_data();
+      let template_data = common.template_data(req);
 
       const ThisHopperJob = HopperJob(req.params.hopper_name);
       const job = ThisHopperJob.findOne({uuid:req.params.job_id})

@@ -114,6 +114,31 @@ body {
     background-size: cover;
   }
 
+  /*
+  i {
+    color: white;
+    background-color: $queen-blue;
+    display: inline-block;
+    height: 1.4em;
+    width: 1.4em;
+    border-radius: 0.7em;
+    text-align: center;
+    padding-top: 0.2em;
+  }
+  */
+
+  .user-icon {
+    height: 1.2em;
+    width: 1.2em;
+    border-radius: 0.5em;
+  }
+
+  .user-picture {
+    height: 5em;
+    width: 5em;
+    border-radius: 1em;
+  }
+
   .hopper {
     .text-cell {
       line-height: 2em;

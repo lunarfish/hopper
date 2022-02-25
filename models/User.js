@@ -8,6 +8,14 @@ const UserSchema = new Schema({
     required: true,
     default: uuidv4()
   },
+  provider_id: {
+    type: String,
+    required: true
+  },
+  user_name: {
+    type: String,
+    required: true
+  },
   first_name: {
     type: String,
     required: true
@@ -19,6 +27,10 @@ const UserSchema = new Schema({
   email: {
     type: String,
     required: true
+  },
+  picture: {
+    type: String,
+    requred: false
   },
   joined: {
     type: Date,

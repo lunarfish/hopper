@@ -33,11 +33,7 @@ services:
       - MONGO_USERNAME=hopper
       - MONGO_PASSWORD=does this work
       - TENOR_API_KEY=$TENOR_API_KEY
-  # client:
-  #   image: mongoclient/mongoclient:4.0.0
-  #   networks:
-  #     hopper:
-  #       ipv4_address: 172.16.1.13
+      - GOOGLE_CREDENTIALS=$GOOGLE_CREDENTIALS
 networks:
   hopper:
     driver: bridge
